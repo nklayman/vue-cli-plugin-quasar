@@ -43,7 +43,10 @@ module.exports = (api, opts, rootOpts) => {
     jsPath = api.resolve('./src/main.js'),
     hasTS = fs.existsSync(tsPath)
 
-  const deps = {
+  const pkg = {
+    scripts: {
+      'build:quasar': 'vue-cli-service build:quasar'
+    },
     dependencies: {
       'quasar-framework': '^0.17.0',
       'quasar-extras': '^2.0.4'
@@ -56,10 +59,10 @@ module.exports = (api, opts, rootOpts) => {
   }
 
   if (opts.quasar.rtlSupport) {
-    deps.devDependencies['postcss-rtl'] = '^1.2.3'
+    pkg.devDependencies['postcss-rtl'] = '^1.2.3'
   }
 
-  api.extendPackage(deps)
+  api.extendPackage(pkg)
 
   // modify plugin options
   extendPluginOptions(api, (pluginOptions, transpileDependencies) => {

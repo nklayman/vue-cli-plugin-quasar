@@ -5,7 +5,7 @@ module.exports = (api, options) => {
 
   api.chainWebpack(chain => {
     const
-      theme = options.pluginOptions.quasar.theme,
+      theme = process.env.QUASAR_THEME || options.pluginOptions.quasar.theme,
       importAll = options.pluginOptions.quasar.importAll
 
     if (!importAll) {
@@ -41,4 +41,34 @@ module.exports = (api, options) => {
     chain.performance
       .maxEntrypointSize(512000)
   })
+
+  api.registerCommand('build:quasar', {
+    description: 'build app with both Material and iOS themes',
+    usage: 'vue-cli-service build:quasar [options passed to build]',
+    details:
+      `All args will be treated as if in a regular build.\n` +
+      `See https://github.com/quasarframework/vue-cli-plugin-quasar for more details about this plugin.`
+  }, async (args) => {
+      let theme = 'mat'
+      // Have each build output to it's own directory
+      args.dest = `dist/quasar-theme-${theme}`
+      // Tell chainWebpack function which theme to use
+      process.env.QUASAR_THEME = theme
+      console.log(`Building app with ${theme} theme...`)
+      // Run build command
+      await api.service.run('build', args)
+
+      theme = 'ios'
+      // Have each build output to it's own directory
+      args.dest = `dist/quasar-theme-${theme}`
+      // Tell chainWebpack function which theme to use
+      process.env.QUASAR_THEME = theme
+      console.log(`Building app with ${theme} theme...`)
+      // Run build command
+      await api.service.run('build', args)
+  })
+}
+
+module.exports.defaultModes = {
+  'build:quasar': 'production'
 }
