@@ -49,23 +49,19 @@ module.exports = (api, options) => {
       `All args will be treated as if in a regular build.\n` +
       `See https://github.com/quasarframework/vue-cli-plugin-quasar for more details about this plugin.`
   }, async (args) => {
-      let theme = 'mat'
+    const build = theme => {
       // Have each build output to it's own directory
       args.dest = `dist/quasar-theme-${theme}`
       // Tell chainWebpack function which theme to use
       process.env.QUASAR_THEME = theme
-      console.log(`Building app with ${theme} theme...`)
-      // Run build command
-      await api.service.run('build', args)
 
-      theme = 'ios'
-      // Have each build output to it's own directory
-      args.dest = `dist/quasar-theme-${theme}`
-      // Tell chainWebpack function which theme to use
-      process.env.QUASAR_THEME = theme
       console.log(`Building app with ${theme} theme...`)
       // Run build command
-      await api.service.run('build', args)
+      return api.service.run('build', args)
+    }
+
+    await build('mat')
+    await build('ios')
   })
 }
 
